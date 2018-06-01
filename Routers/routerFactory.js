@@ -7,7 +7,7 @@ module.exports = function(router, db) {
   router
     .route('/:id')
     .get(handleGet, handlerError)
-    .put(isIDValid, hanldePut, handlerError)
+    .put(isIDValid, areArgumentsValid, hanldePut, handlerError)
     .delete(isIDValid, handleDelete, handlerError);
 
   /**
@@ -90,27 +90,56 @@ module.exports = function(router, db) {
 
     switch (req.baseUrl) {
       case '/actions':
-        if (description && completed && project_id && notes) {
-          // Send obj with content
-          req.obj = { description, completed, project_id, notes };
-          next();
-        } else {
-          const e = new Error();
-          emitError(e, 400, 'Please, give value for all of these: description, completed, project_id and notes');
-          next(e);
+        switch (req.method) {
+          case 'POST':
+            if (description && completed && project_id && notes) {
+              // Send obj with content
+              req.obj = { description, completed, project_id, notes };
+              next();
+            } else {
+              const e = new Error();
+              emitError(e, 400, 'Please, give value for all of these: description, completed, project_id and notes');
+              next(e);
+            }
+            break;
+          case 'PUT':
+            if (description || completed || project_id || notes) {
+              next();
+            } else {
+              const e = new Error();
+              emitError(
+                e,
+                400,
+                'Please, give value for at least one of these: description, completed, project_id and notes'
+              );
+              next(e);
+            }
+            break;
         }
-        break;
+
       case '/projects':
-        if (description && completed && name) {
-          // Send obj with content
-          req.obj = { description, completed, name };
-          next();
-        } else {
-          const e = new Error();
-          emitError(e, 400, 'Please, give value for all of these: description, completed and name');
-          next(e);
+        switch (req.method) {
+          case 'POST':
+            if (description && completed && name) {
+              // Send obj with content
+              req.obj = { description, completed, name };
+              next();
+            } else {
+              const e = new Error();
+              emitError(e, 400, 'Please, give value for all of these: description, completed and name');
+              next(e);
+            }
+            break;
+          case 'PUT':
+            if (description || completed || name) {
+              next();
+            } else {
+              const e = new Error();
+              emitError(e, 400, 'Please, give value for at least one of these: description, completed and name');
+              next(e);
+            }
+            break;
         }
-        break;
     }
   }
 
