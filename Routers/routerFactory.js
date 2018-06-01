@@ -2,7 +2,7 @@ module.exports = function(router, db) {
   router
     .route('/')
     .get(handleGet, handlerError)
-    .post(handlePost, handlerError);
+    .post(areArgumentsValid, handlePost, handlerError);
 
   router
     .route('/:id')
@@ -31,7 +31,7 @@ module.exports = function(router, db) {
       });
   }
   function handlePost(req, res, next) {
-    const { obj } = req.obj;
+    const { ...obj } = req.obj;
     db
       .insert(obj)
       .then(response => {
@@ -74,7 +74,34 @@ module.exports = function(router, db) {
       next(e);
     }
   }
-  function areArgumentsValid(req, res, next) {}
+  function areArgumentsValid(req, res, next) {
+    const { id, name, description, completed, project_id, notes } = req.body;
+
+    switch (req.baseUrl) {
+      case '/actions':
+        if (description && completed && project_id && notes) {
+          // Send obj with content
+          req.obj = { description, completed, project_id, notes };
+          next();
+        } else {
+          const e = new Error();
+          emitError(e, 400, 'Please, give value for all of these: description, completed, project_id and notes');
+          next(e);
+        }
+        break;
+      case '/projects':
+        if (description && completed && name) {
+          // Send obj with content
+          req.obj = { description, completed, name };
+          next();
+        } else {
+          const e = new Error();
+          emitError(e, 400, 'Please, give value for all of these: description, completed and name');
+          next(e);
+        }
+        break;
+    }
+  }
 
   //This function add some properties to an Error object
   function emitError(e, code = 500, message = 'Ups, there were a problem fetching the info from the database') {
