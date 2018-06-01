@@ -9,7 +9,7 @@ const projects = require('./Routers/projectRouter');
 server.use(cors({ origin: '*' }));
 server.use(express.json());
 
-server.use('/clients', clients);
+server.use('/actions', clients);
 server.use('/projects', projects);
 
 server.listen(port, () => console.log('Server running on port %s ', port));
