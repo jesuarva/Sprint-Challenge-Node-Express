@@ -43,7 +43,18 @@ module.exports = function(router, db) {
       });
   }
   function hanldePut(req, res, next) {}
-  function handleDelete(req, res, next) {}
+  function handleDelete(req, res, next) {
+    const { id } = req.params;
+    db
+      .remove(id)
+      .then(response => {
+        res.status(200).json('The register was deleted!');
+      })
+      .catch(e => {
+        emitError(e);
+        next(e);
+      });
+  }
   /**
    * Error handler: a middlewear to handle Erros.
    */
