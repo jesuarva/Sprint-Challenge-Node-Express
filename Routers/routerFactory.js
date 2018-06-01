@@ -6,6 +6,8 @@ module.exports = function(router, db) {
 
   router
     .route('/:id')
+    .get(handleGet, handlerError)
+    .post(handlePost, handlerError)
     .put(isIDValid, hanldePut, handlerError)
     .delete(isIDValid, handleDelete, handlerError);
 
@@ -13,8 +15,14 @@ module.exports = function(router, db) {
    * HTTP request handlers: these are the handlers for HTTP Verbs.
    */
   function handleGet(req, res, next) {
+    const { id } = req.params;
+
     db
-      .get()
+      /**
+       * If ID undefined: get all data.
+       * else: get the specified Id.
+       */
+      .get(Number(id))
       .then(response => {
         res.status(200).json(response);
       })
