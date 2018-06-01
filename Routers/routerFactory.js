@@ -7,7 +7,6 @@ module.exports = function(router, db) {
   router
     .route('/:id')
     .get(handleGet, handlerError)
-    .post(handlePost, handlerError)
     .put(isIDValid, hanldePut, handlerError)
     .delete(isIDValid, handleDelete, handlerError);
 
