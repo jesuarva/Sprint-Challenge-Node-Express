@@ -30,14 +30,25 @@ module.exports = function(router, db) {
         next(e);
       });
   }
-  function handlePost(req, res, next) {}
+  function handlePost(req, res, next) {
+    const { obj } = req.obj;
+    db
+      .insert(obj)
+      .then(response => {
+        res.status(200).json(response);
+      })
+      .catch(e => {
+        emitError(e, 500);
+        next(e);
+      });
+  }
   function hanldePut(req, res, next) {}
   function handleDelete(req, res, next) {}
   /**
    * Error handler: a middlewear to handle Erros.
    */
   function handlerError(err, req, res, next) {
-    res.status(err.status).json(err.message);
+    !err.status ? next(err) : res.status(err.status).json(err.message);
     next();
   }
   /**
