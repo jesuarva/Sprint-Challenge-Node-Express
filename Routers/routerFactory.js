@@ -128,6 +128,7 @@ module.exports = function(router, db) {
             }
             break;
         }
+        break;
 
       case '/projects':
         switch (req.method) {
@@ -152,6 +153,7 @@ module.exports = function(router, db) {
             }
             break;
         }
+        break;
     }
   }
 
