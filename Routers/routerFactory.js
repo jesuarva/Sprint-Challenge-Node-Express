@@ -42,7 +42,19 @@ module.exports = function(router, db) {
         next(e);
       });
   }
-  function hanldePut(req, res, next) {}
+  function hanldePut(req, res, next) {
+    const { id } = req.params;
+    const { ...body } = req.body;
+    db
+      .update(Number(id), body)
+      .then(response => {
+        res.status(200).json(response);
+      })
+      .catch(e => {
+        emitError(e);
+        next(e);
+      });
+  }
   function handleDelete(req, res, next) {
     const { id } = req.params;
     db
@@ -75,7 +87,7 @@ module.exports = function(router, db) {
           next();
         })
         .catch(e => {
-          emitError(e, 500);
+          emitError(e, 500, 'There are no data with this Id');
           next(e);
         });
     } else {
